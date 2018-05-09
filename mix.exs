@@ -30,9 +30,11 @@ defmodule Memesmail.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:phoenix, "~> 1.2.4"},
-      {:postgrex, "~> 0.13.0"},
-      {:ecto, "~> 2.1.3"}
+      {:plug, "~> 1.4.3"},
+      {:cowboy, "~> 1.1.2"},
+      {:poison, "~> 3.1.0"},
+      {:postgrex, "~> 0.13.3"},
+      {:ecto, "~> 2.2.6"}
     ]
   end
 end
