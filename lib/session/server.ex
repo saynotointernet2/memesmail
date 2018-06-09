@@ -5,7 +5,7 @@ defmodule Memesmail.Session.Server do
 
   use GenServer
 
-  alias Memesmail.Session.SessionCache, as Cache
+  alias Memesmail.Session.SessionCache, as: Cache
 
   @name SessionServer
 
@@ -45,7 +45,7 @@ defmodule Memesmail.Session.Server do
      {:ok, nonce} ->
        computed = compute_token(user, login_token, nonce)
        if (computed == session_token) do
-         {:reply, :valid, Cache.set_token(state, user, token, timestamp)}
+         {:reply, :valid, Cache.set_token(state, user, session_token, timestamp)}
        else
          {:reply, :invalid, Cache.clear_user(state, user)}
        end
@@ -62,7 +62,7 @@ defmodule Memesmail.Session.Server do
     case Cache.try_token(state, user, token, timestamp) do
       {:ok, cache} -> {:reply, :valid, cache}
       {_, cache} -> {:reply, :invalid, cache}
-      _ -> {:reply, invalid, state}
+      _ -> {:reply, :invalid, state}
     end
   end
 

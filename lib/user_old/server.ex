@@ -10,8 +10,11 @@ defmodule User.Server do
     GenServer.start_link(__MODULE__, :ok, name: @name)
   end
 
-  def init do
-    {}
+  def init(_opts) do
+    {
+      :ok,
+      nil
+    }
   end
 
   @doc """

@@ -29,7 +29,7 @@ defmodule Memesmail.Session.Client do
   Verify session token for user
   """
   @spec verify_session_token(Types.user, Types.session_token) :: :ok | :invalid | {:error, String.t}
-  def verify_session_token(pid, user, token) do
+  def verify_session_token(user, token) do
     GenServer.call(server_name, {:verify_session_token, user, token})
   end
 
@@ -37,9 +37,8 @@ defmodule Memesmail.Session.Client do
   Kill session for user
   """
   @spec kill_session(Types.user) :: :ok | {:error, String.t}
-  def kill_session(pid, user) do
+  def kill_session(user) do
     GenServer.call(server_name, {:kill_session, user})
   end
-
 
 end

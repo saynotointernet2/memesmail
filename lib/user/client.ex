@@ -29,9 +29,9 @@ defmodule Memesmail.User.Client do
   @doc """
   Log the user out
   """
-  @spec logout(Types.user) :: :ok | {:error, String.t}
+  @spec logout(Types.user, Types.session_token) :: :ok | {:error, String.t}
   def logout(user, token) do
-    GenServer.call(server_name, {:logout, user})
+    GenServer.call(server_name, {:logout, user, token})
   end
 
   @doc """
@@ -39,7 +39,7 @@ defmodule Memesmail.User.Client do
   """
   @spec register_user(Types.user, Types.login_token, Types.root_object) :: :ok | {:error, String.t}
   def register_user(user, login_token, root_object) do
-    GenServer.call(server, {:register_user, user, login_token, root_object})
+    GenServer.call(server_name, {:register_user, user, login_token, root_object})
   end
 
 end

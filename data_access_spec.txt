@@ -1,0 +1,32 @@
+Data Access commands:
+
+store_object :: (data, [keys]) => (data_id, [key_ids])
+add_keys :: (data_id, [keys]) => ([key_ids])
+edit_object_data :: (data_id, data) => ()
+edit_object :: (data_id, data, [keys]) => ([key_ids])
+edit_key :: (data_id, key_id, key) => ()
+
+load_object_with_key :: (data_id, key_id) => (data, key)
+load_object_full :: (data_id) => (data, [keys])
+get_all_ids :: () => ([data_ids])
+
+remove_object :: (data_id) => ()
+remove_keys :: (data_id, [key_ids]) => ()
+
+
+Permissions:
+
+store_object - user
+add_keys - owner
+edit_object_data - owner
+edit_object - owner
+edit_key - owner
+
+load_object_with_key - user
+load_object_full - owner
+get_all_ids - owner
+
+remove_object - owner
+remove_keys - owner
+
+

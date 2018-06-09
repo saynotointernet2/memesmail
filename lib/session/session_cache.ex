@@ -4,6 +4,7 @@ defmodule Memesmail.Session.SessionCache do
   """
 
   alias Memesmail.Model.Types, as: Types
+  alias __MODULE__, as: SessionCache
 
   defstruct nonces: %{}, tokens: %{}, nonce_timeout: 60000, login_timeout: 120000
 
@@ -54,19 +55,21 @@ defmodule Memesmail.Session.SessionCache do
 
   @spec try_nonce(t, Types.user, integer) :: {:ok, Types.nonce} | {:timeout, t} | nil
   def try_nonce(cache, user, current) do
+    timeout = cache.nonce_timeout
     case get_nonce(cache, user) do
       nil -> nil
-      {nonce, ts} when current - ts > cache.nonce_timeout -> {:timeout, remove_nonce(cache, user)}
+      {nonce, ts} when current - ts > timeout -> {:timeout, remove_nonce(cache, user)}
       {nonce, _} -> {:ok, nonce}
     end
   end
 
   @spec try_token(t, Types.user, Types.session_token, integer) :: {:ok | :timeout | :invalid, t}
   def try_token(cache, user, token, current) do
+    timeout = cache.login_timeout
     case get_token(cache, user) do
       nil -> nil
-      {_, ts} when current - ts > cache.login_timeout -> {:timeout, clear_user(cache, user)}
-      {^token, _} -> {:ok, t}
+      {_, ts} when current - ts > timeout -> {:timeout, clear_user(cache, user)}
+      {^token, _} -> {:ok, cache}
       _ -> {:invalid, clear_user(cache, user)}
     end
   end

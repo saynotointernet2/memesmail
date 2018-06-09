@@ -1,4 +1,46 @@
 defmodule Memesmail.Web.Router do
+  use Plug.Router
+
+  alias Memesmail.Web.Plugs, as: Plugs
+
+  plug Corsica, max_age: 600, origins: "*"
+  plug Plugs.Session
+
+  plug :match
+  plug :dispatch
+
+  def init(_opts) do
+    :ok
+  end
+
+  post "/v0/user/init" do
+    send_resp(conn, 200, encode(App.users))
+  end
+
+  post "/v0/user/login" do
+    send_resp(conn, 200, encode(App.users))
+  end
+
+
+  post "/v0/user/logout" do
+    send_resp(conn, 200, encode(App.users))
+  end
+
+  post "/v0/user/register" do
+    send_resp(conn, 200, encode(App.users))
+  end
+
+  match(_) do
+    send_resp(conn, 404, "")
+  end
+
+  defp encode(users) do
+    Poison.encode!(users)
+  end
+end
+
+
+#defmodule Memesmail.Web.Router do
 
 #  pipeline :api do
 #    plug :accepts, ["json"]
@@ -13,41 +55,5 @@ defmodule Memesmail.Web.Router do
 #    post "/user/register", UserController, :register
 #
 #  end
-end
+#end
 
-defmodule Memesmail.Web.Router do
-  use Plug.Router
-
-  alias Memesmail.Web.Plugs, as: Plugs
-
-  plug Corsica, max_age: 600, origins: "*"
-  plug Plugs.Session
-
-  plug :match
-  plug :dispatch
-
-  post "/v0/user/init" do
-    send_resp(conn, 200, encode(App.users))
-  end
-
-  post "/v0/user/init" do
-    send_resp(conn, 200, encode(App.users))
-  end
-
-
-  post "/v0/user/init" do
-    send_resp(conn, 200, encode(App.users))
-  end
-
-  post "/v0/user/init" do
-    send_resp(conn, 200, encode(App.users))
-  end
-
-  match(_) do
-    send_resp(conn, 404, "")
-  end
-
-  defp encode(users) do
-    Poison.encode!(users)
-  end
-end
