@@ -4,7 +4,7 @@ CREATE TABLE public.mm_user
 (
   user_id mm_user_id NOT NULL,
   login_token mm_login_token,
-  storage_root mm_object_id,
+  storage_root mm_object_body,
   CONSTRAINT mm_user_pkey PRIMARY KEY (user_id)
 )
 WITH (

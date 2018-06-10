@@ -139,9 +139,8 @@ CREATE OR REPLACE FUNCTION mm_load_root_object(owner_id mm_user_id) RETURNS mm_o
   DECLARE
     result mm_object_body;
   BEGIN
-    SELECT (obj.body).* INTO result FROM mm_object obj, mm_user usr WHERE
-    usr.user_id = owner_id AND
-    obj.object_id = usr.storage_root
+    SELECT (usr.storage_root).* INTO result FROM mm_user usr WHERE
+    usr.user_id = owner_id;
     RETURN result;
   END;
 $$ LANGUAGE plpgsql;
@@ -164,5 +163,4 @@ CREATE OR REPLACE FUNCTION mm_remove_keys(owner_id mm_user_id, obj_id mm_object_
     END IF;
   END;
 $$ LANGUAGE plpgsql;
-
 
