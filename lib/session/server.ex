@@ -12,7 +12,7 @@ defmodule Memesmail.Session.Server do
   def server_name, do: @name
 
   def start_link(opts) do
-    GenServer.start_link(__MODULE__, opts ++ [name: @name])
+    GenServer.start_link(__MODULE__, opts, name: @name)
   end
 
   def init(opts) do

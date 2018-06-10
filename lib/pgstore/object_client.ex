@@ -1,4 +1,4 @@
-defmodule Memesmail.PgStore.ObjectClient do
+defmodule Memesmail.Pgstore.ObjectClient do
   @moduledoc """
   Define the interface behavior to store data
   """
