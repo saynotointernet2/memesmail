@@ -1,15 +1,17 @@
-defmodule PgStore.UserClient do
+defmodule Memesmail.Pgstore.UserClient do
   @moduledoc """
   Define the client data interface behavior
   """
 
+  alias Memesmail.Pgstore.Server, as: Server
+
   @doc """
   Get user auth token
   """
-  @spec get_user_login_token(pid, binary) :: {atom, binary}
-  def get_user_login_token(pid, user) do
+  @spec get_user_login_token(binary) :: {atom, binary}
+  def get_user_login_token(user) do
   #TODO use prepared statements to avoid sqlinjections
-    result = Postgrex.query!(pid, "SELECT LOGIN_TOKEN FROM MM_USER WHERE USER_IDENTIFIER = '" <> user <> "';", [])
+    result = Postgrex.query!(Server.server_name, "SELECT LOGIN_TOKEN FROM MM_USER WHERE USER_IDENTIFIER = '" <> user <> "';", [])
     cond do
       String.upcase(hd(result.columns)) != "AUTH_TOKEN" ->
         {:error, "invalid table"}
@@ -25,11 +27,11 @@ defmodule PgStore.UserClient do
   @doc """
   Create new user
   """
-  @spec create_new_user(pid, {binary, binary, binary}) :: {atom, binary}
-  def create_new_user(pid, {user_id, login_token, storage_root}) do
+  @spec create_new_user(binary, binary, binary) :: {atom, binary}
+  def create_new_user(user_id, login_token, storage_root) do
   #TODO use prepared statements to avoid sqlinjections
     result = Postgrex.query!(
-      pid,
+      Server.server_name,
       "INSERT INTO MM_USER (user_identifier, login_token, storage_root) VALUES ('" <>
       user_id <> "', '" <>
       login_token <> "', '" <>

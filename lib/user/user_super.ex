@@ -1,4 +1,4 @@
-defmodule User.Super do
+defmodule Memesmail.User.Super do
   @moduledoc false
 
   use Supervisor
@@ -9,7 +9,7 @@ defmodule User.Super do
 
   def init(:ok) do
     children = [
-      worker(User.Server, [])
+      worker(Memesmail.User.Server, [])
     ]
 
     supervise(children, strategy: :one_for_one)

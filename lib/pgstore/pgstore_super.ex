@@ -1,4 +1,4 @@
-defmodule PgStore.Super do
+defmodule Memesmail.Pgstore.Super do
   @moduledoc false
 
   use Supervisor
@@ -9,7 +9,7 @@ defmodule PgStore.Super do
 
   def init(:ok) do
     children = [
-      worker(PgStore.Server, [])
+      worker(Memesmail.Pgstore.Server, [])
     ]
 
     supervise(children, strategy: :one_for_one)

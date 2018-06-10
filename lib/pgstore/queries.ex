@@ -1,4 +1,4 @@
-defmodule PgStore.Queries do
+defmodule Memesmail.Pgstore.Queries do
   @moduledoc """
   Proc names for database
   """
@@ -79,7 +79,5 @@ defmodule PgStore.Queries do
   Output: {:ok}
   """
   def remove_keys_query, do: "select mm_remove_keys($1, $2, $3)"
-
-
 
 end

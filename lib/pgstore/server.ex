@@ -1,4 +1,4 @@
-defmodule PgStore.Server do
+defmodule Memesmail.Pgstore.Server do
   @moduledoc """
   Used to connect to the user database.
   """
