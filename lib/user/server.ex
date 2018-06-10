@@ -1,12 +1,9 @@
 defmodule Memesmail.User.Server do
   @moduledoc """
-  Server that performs account functions
+  Server that handles user-specific commands
   """
 
   use GenServer
-
-#  alias Memesmail.Session.Client, as: Session
-#  alias Memesmail.User.C
 
   @name UserServer
 
@@ -23,19 +20,71 @@ defmodule Memesmail.User.Server do
     }
   end
 
-  @doc """
-  Init user login
-  """
-  def handle_call({:init_login, user}, _from, state) do
-
-
-    nonce = :crypto.strong_rand_bytes(32)
-    timestamp = :os.system_time(:millisecond)
-    {
-      :reply,
-      nonce,
-      Cache.update_nonce(state, user, nonce, timestamp)
-    }
-  end
-
+#  @doc """
+#  Execute registration
+#  """
+#  def handle_call({:register, user, login_token, storage_root}, _from, state) do
+#    case Data.UserClient.createNewUser(DataServer, {user, login_token, storage_root}) do
+#      {:ok, _} ->
+#        {
+#          :reply,
+#          :ok,
+#          state
+#        }
+#      _ ->
+#        {
+#          :reply,
+#          :error,
+#          state
+#        }
+#    end
+#  end
+#
+#  @doc """
+#  Initialize login
+#  """
+#  def handle_call({:init_login, user}, _from, state) do
+#    {
+#      :reply,
+#      Auth.Client.initSession(AuthServer, user),
+#      state
+#    }
+#  end
+#
+#  @doc """
+#  Execute login
+#  """
+#  def handle_call({:do_login, user, sessionToken}, _from , state) do
+#    case Data.UserClient.getUserLoginToken(DataServer, user) do
+#      {:ok, loginToken} ->
+#        {
+#          :reply,
+#          Auth.Client.loginUser(AuthServer, user, loginToken, sessionToken),
+#          state
+#        }
+#      {:error, _} ->
+#        {
+#          :reply,
+#          :invalid,
+#          state
+#        }
+#    end
+#  end
+#
+#  def handle_call({:logout, user, sessionToken}, _from, state) do
+#    case Auth.Client.verifySession(AuthServer, user, sessionToken) do
+#      :valid ->
+#        {
+#          :reply,
+#          Auth.Client.killSession(AuthServer, user),
+#          state
+#        }
+#      _ ->
+#        {
+#          :reply,
+#          :error,
+#          state
+#        }
+#    end
+#  end
 end

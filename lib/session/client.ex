@@ -14,7 +14,7 @@ defmodule Memesmail.Session.Client do
   """
   @spec init_session_nonce(Types.user) :: {:ok, Types.nonce} | {:error, String.t}
   def init_session_nonce(user) do
-    GenServer.call(server_name, {:init_session_nonce, user})
+    GenServer.call(server_name(), {:init_session_nonce, user})
   end
 
   @doc """
@@ -22,7 +22,7 @@ defmodule Memesmail.Session.Client do
   """
   @spec open_session(Types.user, Types.session_token, Types.login_token) :: :ok | :invalid | {:error, String.t}
   def open_session(user, session_token, login_token) do
-    GenServer.call(server_name, {:start_session, user, session_token, login_token})
+    GenServer.call(server_name(), {:start_session, user, session_token, login_token})
   end
 
   @doc """
@@ -30,7 +30,7 @@ defmodule Memesmail.Session.Client do
   """
   @spec verify_session_token(Types.user, Types.session_token) :: :ok | :invalid | {:error, String.t}
   def verify_session_token(user, token) do
-    GenServer.call(server_name, {:verify_session_token, user, token})
+    GenServer.call(server_name(), {:verify_session_token, user, token})
   end
 
   @doc """
@@ -38,7 +38,7 @@ defmodule Memesmail.Session.Client do
   """
   @spec kill_session(Types.user) :: :ok | {:error, String.t}
   def kill_session(user) do
-    GenServer.call(server_name, {:kill_session, user})
+    GenServer.call(server_name(), {:kill_session, user})
   end
 
 end

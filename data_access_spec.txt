@@ -16,17 +16,17 @@ remove_keys :: (data_id, [key_ids]) => ()
 
 Permissions:
 
-store_object - user
-add_keys - owner
-edit_object_data - owner
-edit_object - owner
-edit_key - owner
+store_object
+add_keys
+edit_object_data
+edit_object
+edit_key
 
-load_object_with_key - user
-load_object_full - owner
-get_all_ids - owner
+load_object_with_key
+load_object_full
+get_all_ids
 
-remove_object - owner
-remove_keys - owner
+remove_object
+remove_keys
 
 
