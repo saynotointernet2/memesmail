@@ -4,24 +4,20 @@ defmodule Memesmail.Pgstore.UserClient do
   """
 
   alias Memesmail.Pgstore.Server, as: Server
+  alias Memesmail.Pgstore.Queries, as: Queries
+  alias Memesmail.Model.Types, as: Types
 
   @doc """
   Get user auth token
   """
   @spec get_user_login_token(binary) :: {atom, binary}
   def get_user_login_token(user) do
-  #TODO use prepared statements to avoid sqlinjections
-    result = Postgrex.query!(Server.server_name, "SELECT LOGIN_TOKEN FROM MM_USER WHERE USER_IDENTIFIER = '" <> user <> "';", [])
-    cond do
-      String.upcase(hd(result.columns)) != "AUTH_TOKEN" ->
-        {:error, "invalid table"}
-      result.num_rows == 0 ->
-        {:error, "could not find"}
-      result.num_rows != 1 ->
-        {:error, "multiple results"}
-      true ->
-        {:ok, hd(hd(result.rows))}
-    end
+    Queries.get_user_login_token
+    |> (&Postgrex.prepare!(Server.server_name, "get_user_login_token", &1)).()
+    |> (&Postgrex.execute!(Server.server_name, &1, [{user}]).rows).()
+    |> hd
+    |> hd
+    |> (&{:ok, &1}).()
   end
 
   @doc """
@@ -29,21 +25,10 @@ defmodule Memesmail.Pgstore.UserClient do
   """
   @spec create_new_user(binary, binary, binary) :: {atom, binary}
   def create_new_user(user_id, login_token, storage_root) do
-  #TODO use prepared statements to avoid sqlinjections
-    result = Postgrex.query!(
-      Server.server_name,
-      "INSERT INTO MM_USER (user_identifier, login_token, storage_root) VALUES ('" <>
-      user_id <> "', '" <>
-      login_token <> "', '" <>
-      storage_root <> "')",
-      [])
-
-    cond do
-      result.num_rows != 1 ->
-        {:error, "failed to insert one row into user table"}
-      true ->
-        {:ok, "created user " <> user_id}
-    end
+     Queries.create_new_user
+     |> (&Postgrex.prepare!(Server.server_name, "create_new_user", &1)).()
+     |> (&Postgrex.execute!(Server.server_name, &1, [ {user_id}, {login_token}, {storage_root}]).rows).()
+     |> (&{:ok, &1}).()
   end
 
 end

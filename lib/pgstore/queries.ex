@@ -85,11 +85,12 @@ defmodule Memesmail.Pgstore.Queries do
   Input: {user_id}
   Output: {login_token}
   """
-  def get_user_login_token, do: "select login_token from mm_user where user_id = $1;"
+  def get_user_login_token, do: "select mm_load_login_token($1)"
 
   @doc """
   Insert a new user with the necessary tokens into the database
   Input: {user_id, login_token, object_body}
+  Output: {:ok}
   """
   def create_new_user, do: "insert into mm_user (user_id, login_token, storage_root) VALUES ($1, $2, $3);"
 

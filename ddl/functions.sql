@@ -164,3 +164,14 @@ CREATE OR REPLACE FUNCTION mm_remove_keys(owner_id mm_user_id, obj_id mm_object_
   END;
 $$ LANGUAGE plpgsql;
 
+-- Select Login Token for user
+CREATE OR REPLACE FUNCTION mm_load_login_token(owner_id mm_user_id) RETURNS mm_login_token AS $$
+  DECLARE
+    result mm_login_token;
+  BEGIN
+    SELECT (usr.login_token).* INTO result FROM mm_user usr WHERE
+    usr.user_id = owner_id;
+    RETURN result;
+  END;
+$$ LANGUAGE plpgsql;
+
