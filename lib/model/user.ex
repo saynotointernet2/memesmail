@@ -7,10 +7,10 @@ defmodule Memesmail.Model.User do
 
   @callback init_login(Types.user) :: {:ok, Types.nonce} | {:error, String.t}
 
-  @callback do_login(Types.user, Types.session_token) :: {:ok, Types.root_object} | {:error, String.t}
+  @callback login(Types.user, Types.session_token) :: {:ok, Types.root_object} | {:error, String.t}
 
   @callback logout(Types.user, Types.session_token) :: :ok | {:error, String.t}
 
-  @callback register_user(Types.user, Types.login_token, Types.root_object) :: :ok | {:error, String.t}
+  @callback register_user(Types.user, Types.login_token, Types.register_token, Types.root_object) :: :ok | {:error, String.t}
 
 end

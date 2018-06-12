@@ -1,4 +1,4 @@
-defmodule Memesmail.Model.Data do
+defmodule Memesmail.Model.Object do
   @moduledoc """
   Interface for data access
   """

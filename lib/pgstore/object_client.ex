@@ -6,7 +6,7 @@ defmodule Memesmail.Pgstore.ObjectClient do
   alias Memesmail.Pgstore.Server, as: Server
   alias Memesmail.Pgstore.Queries, as: Queries
 
-  @behaviour Memesmail.Model.Data
+  @behaviour Memesmail.Model.Object
 
   @doc """
   Store data and keys for a given user

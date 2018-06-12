@@ -15,8 +15,8 @@ defmodule Memesmail.Policy.User do
     :ok
   end
 
-  @spec do_login(Types.user, Types.session_token) :: :ok | {:error, String.t}
-  def do_login(_user, _session_token) do
+  @spec login(Types.user, Types.session_token) :: :ok | {:error, String.t}
+  def login(_user, _session_token) do
     :ok
   end
 
@@ -37,12 +37,12 @@ defmodule Memesmail.Policy.User do
   end
 
   @spec register_token_valid(binary) :: :ok | {:error, String.t}
-  defp register_token_valid(register_token) do
+  defp register_token_valid(_register_token) do
     :ok
   end
 
   @spec user_name_valid(Types.user) :: :ok | {:error, String.t}
-  defp user_name_valid(user) do
+  defp user_name_valid(_user) do
     :ok
   end
 

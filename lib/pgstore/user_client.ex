@@ -10,7 +10,7 @@ defmodule Memesmail.Pgstore.UserClient do
   @doc """
   Get user auth token
   """
-  @spec get_user_login_token(binary) :: {atom, binary}
+  @spec get_user_login_token(binary) :: {:ok, Types.login_token} | {:error, String.t}
   def get_user_login_token(user) do
     Queries.get_user_login_token
     |> (&Postgrex.prepare!(Server.server_name, "get_user_login_token", &1)).()
@@ -23,7 +23,7 @@ defmodule Memesmail.Pgstore.UserClient do
   @doc """
   Create new user
   """
-  @spec create_new_user(binary, binary, binary) :: {atom, binary}
+  @spec create_new_user(Types.user, Types.login_token, Types.root_object) :: {:ok, any} | {:error, String.t}
   def create_new_user(user_id, login_token, storage_root) do
      Queries.create_new_user
      |> (&Postgrex.prepare!(Server.server_name, "create_new_user", &1)).()
