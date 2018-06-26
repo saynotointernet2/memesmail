@@ -10,11 +10,11 @@ defmodule Memesmail.Pgstore.UserClient do
   @doc """
   Get user auth token
   """
-  @spec get_user_login_token(binary) :: {:ok, Types.login_token} | {:error, String.t}
+  @spec get_user_login_token(Types.user) :: {:ok, Types.login_token} | {:error, String.t}
   def get_user_login_token(user) do
-    Queries.get_user_login_token
+    Queries.get_user_login_token_query
     |> (&Postgrex.prepare!(Server.server_name, "get_user_login_token", &1)).()
-    |> (&Postgrex.execute!(Server.server_name, &1, [{user}]).rows).()
+    |> (&Postgrex.execute!(Server.server_name, &1, [user]).rows).()
     |> hd
     |> hd
     |> (&{:ok, &1}).()
@@ -23,11 +23,11 @@ defmodule Memesmail.Pgstore.UserClient do
   @doc """
   Create new user
   """
-  @spec create_new_user(Types.user, Types.login_token, Types.root_object) :: {:ok, any} | {:error, String.t}
+  @spec create_new_user(Types.user, Types.login_token, Types.body) :: {:ok, any} | {:error, String.t}
   def create_new_user(user_id, login_token, storage_root) do
-     Queries.create_new_user
+     Queries.create_new_user_query
      |> (&Postgrex.prepare!(Server.server_name, "create_new_user", &1)).()
-     |> (&Postgrex.execute!(Server.server_name, &1, [ {user_id}, {login_token}, {storage_root}]).rows).()
+     |> (&Postgrex.execute!(Server.server_name, &1, [ user_id, login_token, storage_root]).rows).()
      |> (&{:ok, &1}).()
   end
 

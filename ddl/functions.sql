@@ -145,6 +145,12 @@ CREATE OR REPLACE FUNCTION mm_load_root_object(owner_id mm_user_id) RETURNS mm_o
   END;
 $$ LANGUAGE plpgsql;
 
+-- Store root object body for the specified user.
+CREATE OR REPLACE FUNCTION mm_store_root_object(owner_id mm_user_id, root_body mm_object_body) RETURNS VOID AS $$
+  BEGIN
+    UPDATE mm_user SET storage_root = root_body WHERE usr.user_id = owner_id;
+  END;
+$$ LANGUAGE plpgsql;
 
 -- Remove object for specific user by id.
 CREATE OR REPLACE FUNCTION mm_remove_object(owner_id mm_user_id, obj_id mm_object_id) RETURNS VOID AS $$

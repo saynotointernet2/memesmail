@@ -60,13 +60,6 @@ defmodule Memesmail.Pgstore.Queries do
   def load_all_ids_query, do: "select mm_load_all_ids($1)"
 
   @doc """
-  Retrieve the root object for a specified user.
-  Input: {user_id}
-  Output: {:ok, body}
-  """
-  def load_root_object, do: "select mm_load_root_object($1)"
-
-  @doc """
   Remove the specified object by id
   Input: {user_id, object_id}
   Output: {:ok}
@@ -81,17 +74,31 @@ defmodule Memesmail.Pgstore.Queries do
   def remove_keys_query, do: "select mm_remove_keys($1, $2, $3)"
 
   @doc """
-  Get user login token
-  Input: {user_id}
-  Output: {login_token}
+  Retrieve the root object for a specified user.
+  Input: user_id
+  Output: {:ok, body}
   """
-  def get_user_login_token, do: "select mm_load_login_token($1)"
+  def load_root_object_query, do: "select mm_load_root_object($1)"
+
+  @doc """
+  Store the root object for a specified user.
+  Input: user_id, body
+  Output: {:ok}
+  """
+  def store_root_object_query, do: "select mm_store_root_object($1, $2)"
+
+  @doc """
+  Get user login token
+  Input: user_id
+  Output: login_token
+  """
+  def get_user_login_token_query, do: "select mm_load_login_token($1)"
 
   @doc """
   Insert a new user with the necessary tokens into the database
-  Input: {user_id, login_token, object_body}
-  Output: {:ok}
+  Input: {user_id, login_token, body}
+  Output: :ok
   """
-  def create_new_user, do: "insert into mm_user (user_id, login_token, storage_root) VALUES ($1, $2, $3);"
+  def create_new_user_query, do: "insert into mm_user (user_id, login_token, storage_root) VALUES ($1, $2, $3);"
 
 end
