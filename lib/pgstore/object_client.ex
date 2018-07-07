@@ -130,7 +130,7 @@ defmodule Memesmail.Pgstore.ObjectClient do
   """
   @spec load_root_object(T.user) :: {:ok, T.body} | {:error, String.t}
   def load_root_object(user_id) do
-    Queries.load_root_object
+    Queries.load_root_object_query
     |> (&Postgrex.prepare!(Server.server_name, "load_root_object", &1)).()
     |> (&Postgrex.execute!(Server.server_name, &1, [user_id]).rows).()
     |> hd
@@ -145,7 +145,7 @@ defmodule Memesmail.Pgstore.ObjectClient do
   def store_root_object(user, root_object) do
     Queries.store_root_object_query
     |> (&Postgrex.prepare!(Server.server_name, "store_root_object", &1)).()
-    |> (&Postgrex.execute!(Server.server_name, &1, [user_id, root_object]).rows).()
+    |> (&Postgrex.execute!(Server.server_name, &1, [user, root_object]).rows).()
   end
 
 end

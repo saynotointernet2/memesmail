@@ -16,6 +16,6 @@ defmodule Memesmail.Model.Object do
   @callback remove_object(T.user, T.session_token, T.object_id) :: :ok | {:error, String.t}
   @callback remove_keys(T.user, T.session_token, T.object_id, [T.key_id]) :: :ok | {:error, String.t}
   @callback load_root_object(T.user, T.session_token) :: {:ok, T.body} | {:error, String.t}
-  @callback store_root_object(T.user, T.session_token, T.body) :: ok | {:error, String.t}
+  @callback store_root_object(T.user, T.session_token, T.body) :: :ok | {:error, String.t}
 
 end

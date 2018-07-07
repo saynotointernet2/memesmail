@@ -4,7 +4,7 @@ defmodule Memesmail.Mixfile do
   def project do
     [app: :memesmail,
      version: "0.1.0",
-     elixir: "~> 1.4",
+     elixir: "~> 1.6",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps()]

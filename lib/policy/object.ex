@@ -191,7 +191,7 @@ defmodule Memesmail.Policy.Object do
     :ok
   end
 
-  @spec key_ids_valid([T.key_id]) :: ok | {:error, String.t}
+  @spec key_ids_valid([T.key_id]) :: :ok | {:error, String.t}
   defp key_ids_valid(_key_ids) do
     :ok
   end
