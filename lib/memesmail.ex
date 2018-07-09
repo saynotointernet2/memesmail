@@ -14,7 +14,7 @@ defmodule Memesmail do
       # Start the endpoint when the application starts
       supervisor(Memesmail.Pgstore.Super, []),
       supervisor(Memesmail.Session.Super, []),
-      supervisor(Memesmail.User.Super, [])
+      Plug.Adapters.Cowboy.child_spec(:http, Memesmail.Web.Router, [], port: 8080)
       # Start your own worker by calling: PhoenixTry2.Worker.start_link(arg1, arg2, arg3)
       # worker(PhoenixTry2.Worker, [arg1, arg2, arg3]),
     ]

@@ -1,11 +1,12 @@
 defmodule Memesmail.Web.Router do
   use Plug.Router
 
-  alias Memesmail.Web.Plugs, as: Plugs
+  require Logger
 
-  plug Corsica, max_age: 600, origins: "*"
-  plug Plugs.Session
+  alias Memesmail.Web.User, as: User
 
+  plug Plug.Logger
+  plug Plug.Parsers, parsers: [:json], json_decoder: Poison
   plug :match
   plug :dispatch
 
@@ -13,30 +14,38 @@ defmodule Memesmail.Web.Router do
     :ok
   end
 
-  post "/v0/user/init" do
-    send_resp(conn, 200, encode(App.users))
+  post "/v0/user/init_login" do
+    IO.puts("fuck1")
+    conn2 = User.init_login(conn)
+    IO.puts("fuck2")
+    IO.puts(conn2.resp_body)
+    IO.puts("fuck3")
+    send_resp(conn2)
   end
 
   post "/v0/user/login" do
-    send_resp(conn, 200, encode(App.users))
+    conn
+    |> User.login
+    |> send_resp
   end
 
 
   post "/v0/user/logout" do
-    send_resp(conn, 200, encode(App.users))
+    conn
+    |> User.logout
+    |> send_resp
   end
 
-  post "/v0/user/register" do
-    send_resp(conn, 200, encode(App.users))
+  post "/v0/user/register_user" do
+    conn
+    |> User.register_user
+    |> send_resp
   end
 
   match(_) do
     send_resp(conn, 404, "")
   end
 
-  defp encode(users) do
-    Poison.encode!(users)
-  end
 end
 
 

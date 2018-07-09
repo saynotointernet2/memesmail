@@ -19,13 +19,28 @@ defmodule Memesmail.Session.SessionCache do
 
   @spec update_nonce(t, Types.user, Types.nonce, integer) :: t
   def update_nonce(cache, user, nonce, timestamp) do
-    put_in(cache, [:nonces, user], {nonce, timestamp})
+    Map.put(
+      cache,
+      :nonces,
+      Map.put(
+        cache.nonces,
+        user,
+        {nonce, timestamp}
+      )
+    )
   end
 
   @spec set_token(t, Types.user, Types.user_token, integer) :: t
   def set_token(cache, user, token, timestamp) do
     remove_nonce(cache, user)
-    |> put_in([:tokens, user], {token, timestamp})
+    |> Map.put(
+         :tokens,
+         Map.put(
+           cache.tokens,
+           user,
+           {token, timestamp}
+         )
+       )
   end
 
   @spec clear_user(t, Types.user) :: t

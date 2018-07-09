@@ -18,7 +18,7 @@ defmodule Memesmail.Service.User do
   @spec init_login(Types.user) :: {:ok, Types.nonce} | {:error, String.t}
   def init_login(user) do
     with :ok <- Policy.init_login(user),
-         {:ok, nonce} <- Session.init_session_nonce(user)
+         nonce <- Session.init_session_nonce(user)
       do
       {:ok, nonce}
     else
@@ -29,11 +29,11 @@ defmodule Memesmail.Service.User do
   @doc """
   Perform login attempt with the provided session token
   """
-  @spec login(Types.user, Types.session_token) :: {:ok, Types.root_object} | {:error, String.t}
+  @spec login(Types.user, Types.session_token) :: {:ok, Types.body} | {:error, String.t}
   def login(user, token) do
     with :ok <- Policy.login(user, token),
          {:ok, login_token} <- UserStore.get_user_login_token(user),
-         :ok <- Session.open_session(user, token, login_token),
+         :valid <- Session.open_session(user, token, login_token),
          {:ok, root_object} <- ObjectStore.load_root_object(user)
       do
       {:ok, root_object}
@@ -60,13 +60,14 @@ defmodule Memesmail.Service.User do
   @doc """
   Tries to register specified user with provided token and initial root_object
   """
-  @spec register_user(Types.user, Types.login_token, Types.register_token, Types.root_object) :: :ok | {:error, String.t}
+  @spec register_user(Types.user, Types.login_token, Types.register_token, Types.body) :: :ok | {:error, String.t}
   def register_user(user, login_token, register_token, root_object) do
     with :ok <- Policy.register_user(user, login_token, register_token, root_object),
          {:ok, _} <- UserStore.create_new_user(user, login_token, root_object)
       do
       :ok
     else
+      :error -> {:error, "Failed to register user"}
       err -> err
     end
   end
