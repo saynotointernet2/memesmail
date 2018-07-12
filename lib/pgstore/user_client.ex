@@ -14,10 +14,10 @@ defmodule Memesmail.Pgstore.UserClient do
   def get_user_login_token(user) do
     Queries.get_user_login_token_query
     |> (&Postgrex.prepare!(Server.server_name, "get_user_login_token", &1)).()
-    |> (&Postgrex.execute!(Server.server_name, &1, [user]).rows).()
+    |> (&Postgrex.execute!(Server.server_name, &1, [{user}]).rows).()
     |> hd
     |> hd
-    |> (&{:ok, &1}).()
+    |> (&{:ok, elem(&1, 0)}).()
   end
 
   @doc """
@@ -27,7 +27,7 @@ defmodule Memesmail.Pgstore.UserClient do
   def create_new_user(user_id, login_token, storage_root) do
      Queries.create_new_user_query
      |> (&Postgrex.prepare!(Server.server_name, "create_new_user", &1)).()
-     |> (&Postgrex.execute!(Server.server_name, &1, [ user_id, login_token, storage_root]).rows).()
+     |> (&Postgrex.execute!(Server.server_name, &1, [ {user_id}, {login_token}, {storage_root}]).rows).()
      |> (&{:ok, &1}).()
   end
 

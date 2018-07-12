@@ -4,6 +4,7 @@ defmodule Memesmail.Web.Router do
   require Logger
 
   alias Memesmail.Web.User, as: User
+  alias Memesmail.Web.Object, as: Object
 
   plug Plug.Logger
   plug Plug.Parsers, parsers: [:json], json_decoder: Poison
@@ -14,13 +15,13 @@ defmodule Memesmail.Web.Router do
     :ok
   end
 
+  #
+  # USER API
+  #
   post "/v0/user/init_login" do
-    IO.puts("fuck1")
-    conn2 = User.init_login(conn)
-    IO.puts("fuck2")
-    IO.puts(conn2.resp_body)
-    IO.puts("fuck3")
-    send_resp(conn2)
+    conn
+    |> User.init_login
+    |> send_resp
   end
 
   post "/v0/user/login" do
@@ -28,7 +29,6 @@ defmodule Memesmail.Web.Router do
     |> User.login
     |> send_resp
   end
-
 
   post "/v0/user/logout" do
     conn
@@ -39,6 +39,82 @@ defmodule Memesmail.Web.Router do
   post "/v0/user/register_user" do
     conn
     |> User.register_user
+    |> send_resp
+  end
+
+  #
+  # OBJECT API
+  #
+  post "/v0/object/store_object" do
+    conn
+    |> Object.store_object
+    |> send_resp
+  end
+
+  post "/v0/object/add_keys" do
+    conn
+    |> Object.add_keys
+    |> send_resp
+  end
+
+
+  post "/v0/object/edit_body" do
+    conn
+    |> Object.edit_body
+    |> send_resp
+  end
+
+  post "/v0/object/edit_object" do
+    conn
+    |> Object.edit_object
+    |> send_resp
+  end
+
+  post "/v0/object/edit_key" do
+    conn
+    |> Object.edit_key
+    |> send_resp
+  end
+
+  post "/v0/object/load_object_with_key" do
+    conn
+    |> Object.load_object_with_key
+    |> send_resp
+  end
+
+  post "/v0/object/load_object_full" do
+    conn
+    |> Object.load_object_full
+    |> send_resp
+  end
+
+  post "/v0/object/load_all_ids" do
+    conn
+    |> Object.load_all_ids
+    |> send_resp
+  end
+
+  post "/v0/object/load_root_object" do
+    conn
+    |> Object.load_root_object
+    |> send_resp
+  end
+
+  post "/v0/object/remove_object" do
+    conn
+    |> Object.remove_object
+    |> send_resp
+  end
+
+  post "/v0/object/remove_keys" do
+    conn
+    |> Object.remove_keys
+    |> send_resp
+  end
+
+  post "/v0/object/store_root_object" do
+    conn
+    |> Object.store_root_object
     |> send_resp
   end
 
