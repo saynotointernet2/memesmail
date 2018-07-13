@@ -39,7 +39,8 @@ defmodule Memesmail.Mixfile do
       {:poison, "~> 3.1.0"},
       {:postgrex, "~> 0.13.5"},
       {:ecto, "~> 2.2.6"},
-      {:corsica, "~> 1.1.2"}
+      {:corsica, "~> 1.1.2"},
+      {:dialyxir, "~> 0.5", only: [:dev], runtime: false}
     ]
   end
 end

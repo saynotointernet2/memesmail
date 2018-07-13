@@ -64,7 +64,7 @@ defmodule Memesmail.Service.Object do
   def edit_key(user, token, object_id, key_id, key) do
     with :ok <- Policy.edit_key(user, token, object_id, key_id, key),
          :valid <- Session.verify_session_token(user, token),
-         :ok <- ObjectStore.edit_object(user, object_id, key_id, key)
+         :ok <- ObjectStore.edit_key(user, object_id, key_id, key)
       do
       :ok
     else

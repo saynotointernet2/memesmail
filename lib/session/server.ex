@@ -31,7 +31,7 @@ defmodule Memesmail.Session.Server do
     timestamp = :os.system_time(:millisecond)
     {
       :reply,
-      nonce,
+      {:ok, nonce},
       Cache.update_nonce(state, user, nonce, timestamp)
     }
   end
@@ -42,13 +42,13 @@ defmodule Memesmail.Session.Server do
   def handle_call({:start_session, user, session_token, login_token}, _from, state) do
     timestamp = :os.system_time(:millisecond)
     case Cache.try_nonce(state, user, timestamp) do
-     {:ok, nonce} ->
-       computed = compute_token(user, login_token, nonce)
-       if (computed == session_token) do
-         {:reply, :valid, Cache.set_token(state, user, session_token, timestamp)}
-       else
-         {:reply, :invalid, Cache.clear_user(state, user)}
-       end
+      {:ok, nonce} ->
+        computed = compute_token(user, login_token, nonce)
+        if (computed == session_token) do
+          {:reply, :valid, Cache.set_token(state, user, session_token, timestamp)}
+        else
+          {:reply, :invalid, Cache.clear_user(state, user)}
+        end
       {:timeout, cache} -> {:reply, :invalid, cache}
       _ -> {:reply, :invalid, state}
     end
@@ -62,7 +62,6 @@ defmodule Memesmail.Session.Server do
     case Cache.try_token(state, user, token, timestamp) do
       {:ok, cache} -> {:reply, :valid, cache}
       {_, cache} -> {:reply, :invalid, cache}
-      _ -> {:reply, :invalid, state}
     end
   end
 

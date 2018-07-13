@@ -9,7 +9,7 @@ defmodule Memesmail.Web.User do
   @spec init_login(Conn.t) :: Conn.t
   def init_login(conn) do
     with %{"username" => user} <- conn.body_params,
-         {:ok, nonce} <- User.init_login({user})
+         {:ok, nonce} <- User.init_login(user)
       do
         conn
         |> put_resp_content_type("application/json")

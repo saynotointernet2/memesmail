@@ -20,7 +20,7 @@ defmodule Memesmail.Session.Client do
   @doc """
   Logs User in
   """
-  @spec open_session(Types.user, Types.session_token, Types.login_token) :: :ok | :invalid | {:error, String.t}
+  @spec open_session(Types.user, Types.session_token, Types.login_token) :: :valid | :invalid | {:error, String.t}
   def open_session(user, session_token, login_token) do
     GenServer.call(server_name(), {:start_session, user, session_token, login_token})
   end
@@ -28,7 +28,7 @@ defmodule Memesmail.Session.Client do
   @doc """
   Verify session token for user
   """
-  @spec verify_session_token(Types.user, Types.session_token) :: :ok | :invalid | {:error, String.t}
+  @spec verify_session_token(Types.user, Types.session_token) :: :valid | :invalid | {:error, String.t}
   def verify_session_token(user, token) do
     GenServer.call(server_name(), {:verify_session_token, user, token})
   end

@@ -18,7 +18,7 @@ defmodule Memesmail.Service.User do
   @spec init_login(Types.user) :: {:ok, Types.nonce} | {:error, String.t}
   def init_login(user) do
     with :ok <- Policy.init_login(user),
-         nonce <- Session.init_session_nonce(user)
+         {:ok, nonce} <- Session.init_session_nonce(user)
       do
       {:ok, nonce}
     else
