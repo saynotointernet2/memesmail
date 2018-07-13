@@ -3,12 +3,16 @@ defmodule Memesmail.Web.Object do
   Plug implementations for object access calls
   """
 
-  import Plug.Conn
   alias Memesmail.Service.Object, as: Object
+  alias Memesmail.Web.Utils, as: Utils
+
+  import Plug.Conn
 
   @spec store_object(Conn.t) :: Conn.t
   def store_object(conn) do
-    with %{"username" => user, "token" => token, "body" => body, "keys" => keys} <- conn.body_params,
+    with {:ok, user} <- Utils.cookie_username(conn),
+         {:ok, token} <- Utils.cookie_session_token(conn),
+         %{body: body, keys: keys} <- conn.body_params,
          {:ok, {obj_id, key_ids}} <- Object.store_object(user, token, body, keys)
       do
       conn
@@ -24,7 +28,9 @@ defmodule Memesmail.Web.Object do
 
   @spec add_keys(Conn.t) :: Conn.t
   def add_keys(conn) do
-    with %{"username" => user, "token" => token, "object_id" => object_id, "keys" => keys} <- conn.body_params,
+    with {:ok, user} <- Utils.cookie_username(conn),
+         {:ok, token} <- Utils.cookie_session_token(conn),
+         %{object_id: object_id, keys: keys} <- conn.body_params,
          {:ok, key_ids} <- Object.add_keys(user, token, object_id, keys)
       do
       conn
@@ -40,7 +46,9 @@ defmodule Memesmail.Web.Object do
 
   @spec edit_body(Conn.t) :: Conn.t
   def edit_body(conn) do
-    with %{"username" => user, "token" => token, "object_id" => object_id, "body" => body} <- conn.body_params,
+    with {:ok, user} <- Utils.cookie_username(conn),
+         {:ok, token} <- Utils.cookie_session_token(conn),
+         %{object_id: object_id, body: body} <- conn.body_params,
          :ok <- Object.edit_body(user, token, object_id, body)
       do
       conn
@@ -53,13 +61,9 @@ defmodule Memesmail.Web.Object do
 
   @spec edit_object(Conn.t) :: Conn.t
   def edit_object(conn) do
-    with %{
-           "username" => user,
-           "token" => token,
-           "object_id" => object_id,
-           "body" => body,
-           "keys" => keys
-         } <- conn.body_params,
+    with {:ok, user} <- Utils.cookie_username(conn),
+         {:ok, token} <- Utils.cookie_session_token(conn),
+         %{object_id: object_id, body: body, keys: keys} <- conn.body_params,
          {:ok, key_ids} <- Object.edit_object(user, token, object_id, body, keys)
       do
       conn
@@ -76,13 +80,9 @@ defmodule Memesmail.Web.Object do
 
   @spec edit_key(Conn.t) :: Conn.t
   def edit_key(conn) do
-    with %{
-           "username" => user,
-           "token" => token,
-           "object_id" => object_id,
-           "key_id" => key_id,
-           "key" => key
-         } <- conn.body_params,
+    with {:ok, user} <- Utils.cookie_username(conn),
+         {:ok, token} <- Utils.cookie_session_token(conn),
+         %{object_id: object_id, key_id: key_id, key: key} <- conn.body_params,
          :ok <- Object.edit_key(user, token, object_id, key_id, key)
       do
       conn
@@ -95,7 +95,9 @@ defmodule Memesmail.Web.Object do
 
   @spec load_object_with_key(Conn.t) :: Conn.t
   def load_object_with_key(conn) do
-    with %{"username" => user, "token" => token, "object_id" => object_id, "key_id" => key_id} <- conn.body_params,
+    with {:ok, user} <- Utils.cookie_username(conn),
+         {:ok, token} <- Utils.cookie_session_token(conn),
+         %{object_id: object_id, key_id: key_id} <- conn.body_params,
          {:ok, {body, key}} <- Object.load_object_with_key(user, token, object_id, key_id)
       do
       conn
@@ -108,7 +110,9 @@ defmodule Memesmail.Web.Object do
 
   @spec load_object_full(Conn.t) :: Conn.t
   def load_object_full(conn) do
-    with %{"username" => user, "token" => token, "object_id" => object_id} <- conn.body_params,
+    with {:ok, user} <- Utils.cookie_username(conn),
+         {:ok, token} <- Utils.cookie_session_token(conn),
+         %{object_id: object_id} <- conn.body_params,
          {:ok, {body, key_id_pairs}} <- Object.load_object_full(user, token, object_id)
       do
       conn
@@ -121,7 +125,9 @@ defmodule Memesmail.Web.Object do
 
   @spec load_all_ids(Conn.t) :: Conn.t
   def load_all_ids(conn) do
-    with %{"username" => user, "token" => token} <- conn.body_params,
+    with {:ok, user} <- Utils.cookie_username(conn),
+         {:ok, token} <- Utils.cookie_session_token(conn),
+         %{} <- conn.body_params,
          {:ok, obj_ids} <- Object.load_all_ids(user, token)
       do
       conn
@@ -134,7 +140,9 @@ defmodule Memesmail.Web.Object do
 
   @spec load_root_object(Conn.t) :: Conn.t
   def load_root_object(conn) do
-    with %{"username" => user, "token" => token} <- conn.body_params,
+    with {:ok, user} <- Utils.cookie_username(conn),
+         {:ok, token} <- Utils.cookie_session_token(conn),
+         %{} <- conn.body_params,
          {:ok, root_object} <- Object.load_root_object(user, token)
       do
       conn
@@ -147,7 +155,9 @@ defmodule Memesmail.Web.Object do
 
   @spec remove_object(Conn.t) :: Conn.t
   def remove_object(conn) do
-    with %{"username" => user, "token" => token, "object_id" => object_id} <- conn.body_params,
+    with {:ok, user} <- Utils.cookie_username(conn),
+         {:ok, token} <- Utils.cookie_session_token(conn),
+         %{object_id: object_id} <- conn.body_params,
          :ok <- Object.remove_object(user, token, object_id)
       do
       conn
@@ -160,7 +170,9 @@ defmodule Memesmail.Web.Object do
 
   @spec remove_keys(Conn.t) :: Conn.t
   def remove_keys(conn) do
-    with %{"username" => user, "token" => token, "object_id" => object_id, "key_ids" => key_ids} <- conn.body_params,
+    with {:ok, user} <- Utils.cookie_username(conn),
+         {:ok, token} <- Utils.cookie_session_token(conn),
+         %{object_id: object_id, key_ids: key_ids} <- conn.body_params,
          :ok <- Object.remove_keys(user, token, object_id, key_ids)
       do
       conn
@@ -173,7 +185,9 @@ defmodule Memesmail.Web.Object do
 
   @spec store_root_object(Conn.t) :: Conn.t
   def store_root_object(conn) do
-    with %{"username" => user, "token" => token, "root" => root} <- conn.body_params,
+    with {:ok, user} <- Utils.cookie_username(conn),
+         {:ok, token} <- Utils.cookie_session_token(conn),
+         %{root: root} <- conn.body_params,
          :ok <- Object.store_root_object(user, token, root)
       do
       conn
@@ -183,5 +197,4 @@ defmodule Memesmail.Web.Object do
       _ -> resp(conn, 400, "error")
     end
   end
-
 end

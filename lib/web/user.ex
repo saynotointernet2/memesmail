@@ -3,17 +3,20 @@ defmodule Memesmail.Web.User do
   Plug implementations for user calls
   """
 
-  import Plug.Conn
   alias Memesmail.Service.User, as: User
+  alias Memesmail.Web.Utils, as: Utils
+
+  import Plug.Conn
 
   @spec init_login(Conn.t) :: Conn.t
   def init_login(conn) do
-    with %{"username" => user, "cnonce" => cnonce} <- conn.body_params,
+    with {:ok, user} <- Utils.cookie_username(conn),
+         %{"cnonce" => cnonce} <- conn.body_params,
          {:ok, nonce} <- User.init_login(user, cnonce)
       do
-        conn
-        |> put_resp_content_type("application/json")
-        |> resp(200, Poison.encode!(%{nonce: Base.encode64(nonce)}))
+      conn
+      |> put_resp_content_type("application/json")
+      |> resp(200, Poison.encode!(%{nonce: Base.encode64(nonce)}))
     else
       _ -> resp(conn, 400, "error")
     end
@@ -21,7 +24,8 @@ defmodule Memesmail.Web.User do
 
   @spec login(Conn.t) :: Conn.t
   def login(conn) do
-    with %{"username" => user, "token" => token} <- conn.body_params,
+    with {:ok, user} <- Utils.cookie_username(conn),
+         {:ok, token} <- Utils.cookie_session_token(conn),
          {:ok, root_object} <- User.login(user, token)
       do
       conn
@@ -34,7 +38,8 @@ defmodule Memesmail.Web.User do
 
   @spec logout(Conn.t) :: Conn.t
   def logout(conn) do
-    with %{"username" => user, "token" => token} <- conn.body_params,
+    with {:ok, user} <- Utils.cookie_username(conn),
+         {:ok, token} <- Utils.cookie_session_token(conn),
          :ok <- User.logout(user, token)
       do
       conn
@@ -47,7 +52,7 @@ defmodule Memesmail.Web.User do
 
   @spec register_user(Conn.t) :: Conn.t
   def register_user(conn) do
-    with %{"username" => user, "register_token" => reg, "login_token" => token,  "root" => root} <- conn.body_params,
+    with %{:username => user, :register_token => reg, :login_token => token, :root => root} <- conn.body_params,
          :ok <- User.register_user(user, reg, token, root)
       do
       conn
