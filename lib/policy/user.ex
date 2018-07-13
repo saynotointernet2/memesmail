@@ -5,8 +5,8 @@ defmodule Memesmail.Policy.User do
 
   alias Memesmail.Model.Types, as: T
 
-  @spec init_login(T.user) :: :ok | {:error, String.t}
-  def init_login(_user) do
+  @spec init_login(T.user, T.nonce) :: :ok | {:error, String.t}
+  def init_login(_user, _cnonce) do
     :ok
   end
 

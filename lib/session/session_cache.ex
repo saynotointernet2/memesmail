@@ -9,7 +9,7 @@ defmodule Memesmail.Session.SessionCache do
   defstruct nonces: %{}, tokens: %{}, nonce_timeout: 60000, login_timeout: 120000
 
   @type t :: %SessionCache{}
-  @typep user_nonce :: {Types.nonce, integer}
+  @typep nonces :: {{Types.nonce, Types.nonce}, integer}
   @typep user_token :: {Types.session_token, integer}
 
   @spec new(integer, integer) :: t
@@ -17,15 +17,15 @@ defmodule Memesmail.Session.SessionCache do
     %SessionCache{nonces: %{}, tokens: %{}, nonce_timeout: nonce_timeout, login_timeout: login_timeout}
   end
 
-  @spec update_nonce(t, Types.user, Types.nonce, integer) :: t
-  def update_nonce(cache, user, nonce, timestamp) do
+  @spec update_nonce(t, Types.user, {Types.nonce, Types.nonce}, integer) :: t
+  def update_nonce(cache, user, nonces, timestamp) do
     Map.put(
       cache,
       :nonces,
       Map.put(
         cache.nonces,
         user,
-        {nonce, timestamp}
+        {nonces, timestamp}
       )
     )
   end
@@ -48,13 +48,13 @@ defmodule Memesmail.Session.SessionCache do
     %SessionCache{cache | nonces: Map.delete(cache.nonces, user), tokens: Map.delete(cache.tokens, user)}
   end
 
-  @spec try_nonce(t, Types.user, integer) :: {:ok, Types.nonce} | {:timeout, t} | nil
+  @spec try_nonce(t, Types.user, integer) :: {:ok, {Types.nonce, Types.nonce}} | {:timeout, t} | nil
   def try_nonce(cache, user, current) do
     timeout = cache.nonce_timeout
     case get_nonce(cache, user) do
       nil -> nil
       {_, ts} when current - ts > timeout -> {:timeout, remove_nonce(cache, user)}
-      {nonce, _} -> {:ok, nonce}
+      {nonces, _} -> {:ok, nonces}
     end
   end
 
@@ -69,7 +69,7 @@ defmodule Memesmail.Session.SessionCache do
     end
   end
 
-  @spec get_nonce(t, Types.user) :: user_nonce | nil
+  @spec get_nonce(t, Types.user) :: nonces | nil
   defp get_nonce(cache, user) do
     cache.nonces[user]
   end

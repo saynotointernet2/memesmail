@@ -6,6 +6,7 @@ defmodule Memesmail.Session.Server do
   use GenServer
 
   alias Memesmail.Session.SessionCache, as: Cache
+  alias Memesmail.Model.Types, as: Types
 
   @name SessionServer
 
@@ -26,13 +27,13 @@ defmodule Memesmail.Session.Server do
   @doc """
   Init user auth
   """
-  def handle_call({:init_session_nonce, user}, _from, state) do
-    nonce = :crypto.strong_rand_bytes(32)
+  def handle_call({:init_session_nonce, user, cnonce}, _from, state) do
+    snonce = :crypto.strong_rand_bytes(32)
     timestamp = :os.system_time(:millisecond)
     {
       :reply,
-      {:ok, nonce},
-      Cache.update_nonce(state, user, nonce, timestamp)
+      {:ok, snonce},
+      Cache.update_nonce(state, user, {cnonce, snonce}, timestamp)
     }
   end
 
@@ -42,8 +43,8 @@ defmodule Memesmail.Session.Server do
   def handle_call({:start_session, user, session_token, login_token}, _from, state) do
     timestamp = :os.system_time(:millisecond)
     case Cache.try_nonce(state, user, timestamp) do
-      {:ok, nonce} ->
-        computed = compute_token(user, login_token, nonce)
+      {:ok, {cnonce, snonce}} ->
+        computed = compute_token(user, login_token, cnonce, snonce)
         if (computed == session_token) do
           {:reply, :valid, Cache.set_token(state, user, session_token, timestamp)}
         else
@@ -77,9 +78,9 @@ defmodule Memesmail.Session.Server do
   end
 
   #TODO Currently we will not use the loginToken parameter
-  @spec compute_token(binary, binary, binary) :: binary
-  def compute_token(user, _loginToken, nonce) do
-    user <> nonce
+  @spec compute_token(Types.user, Types.login_token, Types.nonce, Types.nonce) :: binary
+  def compute_token(user, token, cnonce, snonce) do
+    user <> snonce <> cnonce <> token
   end
 
 end

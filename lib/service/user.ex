@@ -15,10 +15,10 @@ defmodule Memesmail.Service.User do
   @doc """
   Intialize a log-in procedure
   """
-  @spec init_login(Types.user) :: {:ok, Types.nonce} | {:error, String.t}
-  def init_login(user) do
-    with :ok <- Policy.init_login(user),
-         {:ok, nonce} <- Session.init_session_nonce(user)
+  @spec init_login(Types.user, Types.nonce) :: {:ok, Types.nonce} | {:error, String.t}
+  def init_login(user, cnonce) do
+    with :ok <- Policy.init_login(user, cnonce),
+         {:ok, nonce} <- Session.init_session_nonce(user, cnonce)
       do
       {:ok, nonce}
     else

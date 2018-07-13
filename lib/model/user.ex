@@ -5,7 +5,7 @@ defmodule Memesmail.Model.User do
 
   alias Memesmail.Model.Types, as: Types
 
-  @callback init_login(Types.user) :: {:ok, Types.nonce} | {:error, String.t}
+  @callback init_login(Types.user, Types.nonce) :: {:ok, Types.nonce} | {:error, String.t}
 
   @callback login(Types.user, Types.session_token) :: {:ok, Types.root_object} | {:error, String.t}
 

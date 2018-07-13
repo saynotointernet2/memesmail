@@ -12,9 +12,9 @@ defmodule Memesmail.Session.Client do
   @doc """
   Initialize session for user, return nonce
   """
-  @spec init_session_nonce(Types.user) :: {:ok, Types.nonce} | {:error, String.t}
-  def init_session_nonce(user) do
-    GenServer.call(server_name(), {:init_session_nonce, user})
+  @spec init_session_nonce(Types.user, Types.nonce) :: {:ok, Types.nonce} | {:error, String.t}
+  def init_session_nonce(user, cnonce) do
+    GenServer.call(server_name(), {:init_session_nonce, user, cnonce})
   end
 
   @doc """
