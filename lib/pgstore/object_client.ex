@@ -1,6 +1,6 @@
 defmodule Memesmail.Pgstore.ObjectClient do
   @moduledoc """
-  Define the interface behavior to store data
+  Library for retrieving Object data
   """
 
   alias Memesmail.Model.Types, as: T

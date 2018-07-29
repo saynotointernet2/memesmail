@@ -18,4 +18,7 @@ defmodule Memesmail.Model.Types do
   @type session_token :: binary
   @type register_token :: binary
 
+  @type user_identity :: binary
+  @type server_identity :: binary
+
 end

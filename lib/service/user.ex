@@ -5,7 +5,7 @@ defmodule Memesmail.Service.User do
 
   @behaviour Memesmail.Model.User
 
-  alias Memesmail.Model.Types, as: Types
+  alias Memesmail.Model.Types, as: T
   alias Memesmail.Policy.User, as: Policy
   alias Memesmail.Session.Client, as: Session
   alias Memesmail.Pgstore.UserClient, as: UserStore
@@ -15,7 +15,7 @@ defmodule Memesmail.Service.User do
   @doc """
   Intialize a log-in procedure
   """
-  @spec init_login(Types.user, Types.nonce) :: {:ok, Types.nonce} | {:error, String.t}
+  @spec init_login(T.user, T.nonce) :: {:ok, T.nonce} | {:error, String.t}
   def init_login(user, cnonce) do
     with :ok <- Policy.init_login(user, cnonce),
          {:ok, nonce} <- Session.init_session_nonce(user, cnonce)
@@ -29,7 +29,7 @@ defmodule Memesmail.Service.User do
   @doc """
   Perform login attempt with the provided session token
   """
-  @spec login(Types.user, Types.session_token) :: {:ok, Types.body} | {:error, String.t}
+  @spec login(T.user, T.session_token) :: {:ok, T.body} | {:error, String.t}
   def login(user, token) do
     with :ok <- Policy.login(user, token),
          {:ok, login_token} <- UserStore.get_user_login_token(user),
@@ -46,7 +46,7 @@ defmodule Memesmail.Service.User do
   @doc """
   Log the user out
   """
-  @spec logout(Types.user, Types.session_token) :: :ok | {:error, String.t}
+  @spec logout(T.user, T.session_token) :: :ok | {:error, String.t}
   def logout(user, token) do
     with :ok <- Policy.logout(user, token),
          :ok <- Session.kill_session(user)
@@ -60,7 +60,7 @@ defmodule Memesmail.Service.User do
   @doc """
   Tries to register specified user with provided token and initial root_object
   """
-  @spec register_user(Types.user, Types.login_token, Types.register_token, Types.body) :: :ok | {:error, String.t}
+  @spec register_user(T.user, T.login_token, T.register_token, T.body) :: :ok | {:error, String.t}
   def register_user(user, login_token, register_token, root_object) do
     with :ok <- Policy.register_user(user, login_token, register_token, root_object),
          {:ok, _} <- UserStore.create_new_user(user, login_token, root_object)

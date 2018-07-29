@@ -23,6 +23,14 @@ CREATE TYPE mm_object_key_id AS (
   object_key_id varchar(255)
 );
 
+CREATE TYPE mm_user_info AS (
+  user_info bytea
+);
+
+CREATE TYPE mm_server_info AS (
+  server_info bytea
+);
+
 CREATE TYPE mm_object_stored_ids AS (
   object_id	mm_object_id,
   key_ids	mm_object_key_id[]

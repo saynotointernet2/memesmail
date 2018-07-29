@@ -3,8 +3,9 @@ defmodule Memesmail.Web.Router do
 
   require Logger
 
-  alias Memesmail.Web.User, as: User
+  alias Memesmail.Web.Identity, as: Identity
   alias Memesmail.Web.Object, as: Object
+  alias Memesmail.Web.User, as: User
 
   plug Plug.Logger
   plug Plug.Parsers, parsers: [:json], json_decoder: Poison
@@ -118,27 +119,36 @@ defmodule Memesmail.Web.Router do
     |> send_resp
   end
 
+  #
+  # IDENTITY API
+  #
+  post "/v0/identity/user_identity" do
+    conn
+    |> Identity.user_identity
+    |> send_resp
+  end
+
+  post "/v0/identity/user_identity_history" do
+    conn
+    |> Identity.user_identity_history
+    |> send_resp
+  end
+
+  post "/v0/identity/server_identity" do
+    conn
+    |> Identity.server_identity
+    |> send_resp
+  end
+
+  post "/v0/identity/server_identity_history" do
+    conn
+    |> Identity.server_identity_history
+    |> send_resp
+  end
+
   match(_) do
     send_resp(conn, 404, "")
   end
 
 end
-
-
-#defmodule Memesmail.Web.Router do
-
-#  pipeline :api do
-#    plug :accepts, ["json"]
-#  end
-
-#  scope "/v0", Memesmail do
-#    pipe_through :api
-#
-#    post "/user/init", UserController, :init_login
-#    post "/user/login", UserController, :do_login
-#    post "/user/logout", UserController, :logout
-#    post "/user/register", UserController, :register
-#
-#  end
-#end
 

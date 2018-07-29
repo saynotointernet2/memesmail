@@ -181,3 +181,38 @@ CREATE OR REPLACE FUNCTION mm_load_login_token(owner_id mm_user_id) RETURNS mm_l
   END;
 $$ LANGUAGE plpgsql;
 
+-- Update user identity info
+CREATE OR REPLACE FUNCTION mm_update_user_identity(user_id mm_user_id, new_identity mm_user_info) RETURNS VOID AS $$
+  DECLARE
+    info_num bigint;
+  BEGIN
+    SELECT COALESCE(max(identity_number), 0) INTO info_num FROM mmm_user_identity ids WHERE
+    ids.user_id = user_id;
+    INSERT INTO mm_user_identity (user_id, identity_number, user_info) VALUES (user_id, info_num + 1, new_identity);
+  END;
+$$ LANGUAGE plpgsql;
+
+-- Load user identity info
+CREATE OR REPLACE FUNCTION mm_load_user_identity(user_id mm_user_id) RETURNS mm_user_info AS $$
+  DECLARE
+    result mm_user_info;
+    latest bigint;
+  BEGIN
+    SELECT max(ids.identity_number) INTO latest FROM mm_user_identity ids WHERE
+    ids.user_id = user_id;
+    SELECT (ids.user_info).* INTO result FROM mm_user_identity ids WHERE
+    usr.user_id = owner_id AND
+    usr.identity_number = latest;
+    RETURN result;
+  END;
+$$ LANGUAGE plpgsql;
+
+-- Load user identity history
+CREATE OR REPLACE FUNCTION mm_load_user_identity_history(user_id mm_user_id) RETURNS mm_user_info[] AS $$
+  DECLARE
+    result mm_user_info[];
+  BEGIN
+    result := ARRAY(SELECT ROW(ids.user_info) FROM mm_user_identity ids WHERE ids.user_id = user_id ORDER BY ids.identity_number ASC);
+    RETURN result;
+  END;
+$$ LANGUAGE plpgsql;

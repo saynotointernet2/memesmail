@@ -1,5 +1,4 @@
 -- User table. Stores user ids, login tokens, root object ids
-
 CREATE TABLE public.mm_user
 (
   user_id mm_user_id NOT NULL,
@@ -17,7 +16,6 @@ GRANT SELECT, UPDATE, INSERT ON TABLE public.mm_user TO memesmail_clients;
 
 
 -- Object table stores users' object bodies and object ids references users through user id. Auto generates ids.
-
 CREATE TABLE public.mm_object
 (
   object_id mm_object_id NOT NULL DEFAULT ROW(encode(decode(replace(((gen_random_uuid())::character varying)::text, '-'::text, ''::text), 'hex'::text), 'base64'::text)),
@@ -35,6 +33,42 @@ ALTER TABLE public.mm_object
   OWNER TO postgres;
 GRANT ALL ON TABLE public.mm_object TO postgres;
 GRANT SELECT, UPDATE, INSERT ON TABLE public.mm_object TO memesmail_clients;
+
+
+-- Table for user identities
+CREATE TABLE public.mm_user_identity
+(
+  user_id mm_user_id NOT NULL,
+  identity_number bigint NOT NULL,
+  user_info mm_user_info NOT NULL,
+  CONSTRAINT mm_user_identity_pkey PRIMARY KEY (user_id, identity_number),
+  CONSTRAINT mm_user_identity_user_id_fkey FOREIGN KEY (user_id)
+      REFERENCES public.mm_user (user_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE public.mm_user_identity
+  OWNER TO postgres;
+GRANT ALL ON TABLE public.mm_user_identity TO postgres;
+GRANT SELECT, UPDATE, INSERT ON TABLE public.mm_user_identity TO memesmail_clients;
+
+
+-- Table for server identities
+CREATE TABLE public.mm_server_identity
+(
+  identity_number bigint NOT NULL,
+  server_info mm_server_info NOT NULL,
+  CONSTRAINT mm_server_identity_pkey PRIMARY KEY (identity_number)
+)
+WITH (
+OIDS=FALSE
+);
+ALTER TABLE public.mm_server_identity
+OWNER TO postgres;
+GRANT ALL ON TABLE public.mm_server_identity TO postgres;
+GRANT SELECT, UPDATE, INSERT ON TABLE public.mm_server_identity TO memesmail_clients;
 
 
 -- Object keys table, stores key ids, keys by reference to object through object id. Auto generates ids.
