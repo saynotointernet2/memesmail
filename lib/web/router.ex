@@ -43,6 +43,12 @@ defmodule Memesmail.Web.Router do
     |> send_resp
   end
 
+  post "/v0/user/update_identity" do
+    conn
+    |> User.update_identity
+    |> send_resp
+  end
+
   #
   # OBJECT API
   #

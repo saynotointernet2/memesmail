@@ -13,4 +13,6 @@ defmodule Memesmail.Model.User do
 
   @callback register_user(Types.user, Types.login_token, Types.register_token, Types.root_object) :: :ok | {:error, String.t}
 
+  @callback update_identity(Types.user, Types.session_token, Types.user_identity) :: :ok | {:error, String.t}
+
 end

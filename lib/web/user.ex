@@ -62,4 +62,18 @@ defmodule Memesmail.Web.User do
     end
   end
 
+  @spec update_identity(Conn.t) :: Conn.t
+  def update_identity(conn) do
+    with {:ok, user} <- Utils.cookie_username(conn),
+         {:ok, token} <- Utils.cookie_session_token(conn),
+         %{"new_identity" => new_identity} <- conn.body_params,
+         :ok <- User.update_identity(user, token, new_identity)
+      do
+      conn
+      |> resp(200, "success")
+    else
+      _ -> resp(conn, 400, "error")
+    end
+  end
+
 end

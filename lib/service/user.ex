@@ -10,6 +10,8 @@ defmodule Memesmail.Service.User do
   alias Memesmail.Session.Client, as: Session
   alias Memesmail.Pgstore.UserClient, as: UserStore
   alias Memesmail.Pgstore.ObjectClient, as: ObjectStore
+  alias Memesmail.Pgstore.IdentityClient, as: IdStore
+  alias Memesmail.Crypto.Identity, as: IdCrypto
 
 
   @doc """
@@ -58,7 +60,7 @@ defmodule Memesmail.Service.User do
   end
 
   @doc """
-  Tries to register specified user with provided token and initial root_object
+  Try to register specified user with provided token and initial root_object
   """
   @spec register_user(T.user, T.login_token, T.register_token, T.body) :: :ok | {:error, String.t}
   def register_user(user, login_token, register_token, root_object) do
@@ -72,4 +74,22 @@ defmodule Memesmail.Service.User do
     end
   end
 
+  @doc """
+  Try to update identity for specified user
+  """
+  @spec update_identity(T.user, T.session_token, T.user_identity) :: :ok | {:error, String.t}
+  def update_identity(user, token, new_identity) do
+    with :ok <- Policy.update_identity(user, token, new_identity),
+         :valid <- Session.verify_session_token(user, token),
+         {:ok, old_identity} <- IdStore.user_identity(user),
+         :valid_identity <- IdCrypto.verify_user_identity(new_identity, old_identity),
+         :ok <- UserStore.update_identity(user, new_identity)
+      do
+        :ok
+        else
+        :invalid -> {:error, "Failed to validate session token"}
+        :invalid_identity -> {:error, "Failed to validate new identity object"}
+        err -> err
+    end
+  end
 end

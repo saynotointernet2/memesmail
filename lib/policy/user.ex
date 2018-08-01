@@ -20,6 +20,11 @@ defmodule Memesmail.Policy.User do
     :ok
   end
 
+  @spec update_identity(T.user, T.session_token, T.user_identity) :: :ok | {:error, String.t}
+  def update_identity(_user, _session_token, _user_identity) do
+    :ok
+  end
+
   @spec register_user(T.user, T.login_token, binary, T.root_object) :: :ok | {:error, String.t}
   def register_user(user, _login_token, register_token, _root_object) do
     with :ok <- user_name_valid(user),

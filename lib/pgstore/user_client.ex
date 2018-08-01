@@ -31,4 +31,12 @@ defmodule Memesmail.Pgstore.UserClient do
      |> (&{:ok, &1}).()
   end
 
+  @spec update_identity(Types.user, Types.user_identity) :: :ok | {:error, String.t}
+  def update_identity(user, new_identity) do
+    Queries.update_user_identity_query
+    |> (&Postgrex.prepare!(Server.server_name, "update_user_identity", &1)).()
+    |> (&Postgrex.execute!(Server.server_name, &1, [ {user}, {new_identity} ])).()
+    :ok
+  end
+
 end
