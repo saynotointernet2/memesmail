@@ -52,8 +52,8 @@ defmodule Memesmail.Web.User do
 
   @spec register_user(Conn.t) :: Conn.t
   def register_user(conn) do
-    with %{:username => user, :register_token => reg, :login_token => token, :root => root} <- conn.body_params,
-         :ok <- User.register_user(user, reg, token, root)
+    with %{:username => user, :register_token => reg, :login_token => token, :root => root, :identity => identity} <- conn.body_params,
+         :ok <- User.register_user(user, reg, token, root, identity)
       do
       conn
       |> resp(200, "success")

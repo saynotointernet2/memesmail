@@ -23,12 +23,12 @@ defmodule Memesmail.Pgstore.UserClient do
   @doc """
   Create new user
   """
-  @spec create_new_user(Types.user, Types.login_token, Types.body) :: {:ok, any} | {:error, String.t}
-  def create_new_user(user_id, login_token, storage_root) do
+  @spec create_new_user(Types.user, Types.login_token, Types.body, Types.user_identity) :: :ok | {:error, String.t}
+  def create_new_user(user_id, login_token, storage_root, identity) do
      Queries.create_new_user_query
      |> (&Postgrex.prepare!(Server.server_name, "create_new_user", &1)).()
-     |> (&Postgrex.execute!(Server.server_name, &1, [ {user_id}, {login_token}, {storage_root}]).rows).()
-     |> (&{:ok, &1}).()
+     |> (&Postgrex.execute!(Server.server_name, &1, [ {user_id}, {login_token}, {storage_root}, {identity}]).rows).()
+     :ok
   end
 
   @spec update_identity(Types.user, Types.user_identity) :: :ok | {:error, String.t}

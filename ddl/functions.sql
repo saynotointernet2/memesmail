@@ -181,12 +181,20 @@ CREATE OR REPLACE FUNCTION mm_load_login_token(owner_id mm_user_id) RETURNS mm_l
   END;
 $$ LANGUAGE plpgsql;
 
+-- Create new user
+CREATE OR REPLACE FUNCTION mm_create_new_user(owner_id mm_user_id, login_token mm_login_token, root_object mm_object_body, identity mm_user_info) RETURNS VOID AS $$
+  BEGIN
+    INSERT INTO mm_user (user_id, login_token, storage_root) VALUES (owner_id, login_token, root_object);
+    INSERT INTO mm_user_identity (user_id, identity_number, user_info) VALUES (owner_id, 1, identity);
+  END;
+$$ LANGUAGE plpgsql;
+
 -- Update user identity info
 CREATE OR REPLACE FUNCTION mm_update_user_identity(user_id mm_user_id, new_identity mm_user_info) RETURNS VOID AS $$
   DECLARE
     info_num bigint;
   BEGIN
-    SELECT COALESCE(max(identity_number), 0) INTO info_num FROM mmm_user_identity ids WHERE
+    SELECT COALESCE(max(identity_number), 0) INTO info_num FROM mm_user_identity ids WHERE
     ids.user_id = user_id;
     INSERT INTO mm_user_identity (user_id, identity_number, user_info) VALUES (user_id, info_num + 1, new_identity);
   END;

@@ -99,7 +99,7 @@ defmodule Memesmail.Pgstore.Queries do
   Input: {user, login_token, body}
   Output: :ok
   """
-  def create_new_user_query, do: "insert into mm_user (user_id, login_token, storage_root) VALUES ($1, $2, $3);"
+  def create_new_user_query, do: "select mm_create_new_user($1, $2, $3, $4)"
 
   @doc """
   Load the user's latest identity info

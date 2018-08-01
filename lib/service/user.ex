@@ -62,10 +62,10 @@ defmodule Memesmail.Service.User do
   @doc """
   Try to register specified user with provided token and initial root_object
   """
-  @spec register_user(T.user, T.login_token, T.register_token, T.body) :: :ok | {:error, String.t}
-  def register_user(user, login_token, register_token, root_object) do
-    with :ok <- Policy.register_user(user, login_token, register_token, root_object),
-         {:ok, _} <- UserStore.create_new_user(user, login_token, root_object)
+  @spec register_user(T.user, T.login_token, T.register_token, T.body, T.user_identity) :: :ok | {:error, String.t}
+  def register_user(user, login_token, register_token, root_object, identity) do
+    with :ok <- Policy.register_user(user, login_token, register_token, root_object, identity),
+         :ok <- UserStore.create_new_user(user, login_token, root_object, identity)
       do
       :ok
     else
@@ -85,11 +85,11 @@ defmodule Memesmail.Service.User do
          :valid_identity <- IdCrypto.verify_user_identity(new_identity, old_identity),
          :ok <- UserStore.update_identity(user, new_identity)
       do
-        :ok
-        else
-        :invalid -> {:error, "Failed to validate session token"}
-        :invalid_identity -> {:error, "Failed to validate new identity object"}
-        err -> err
+      :ok
+    else
+      :invalid -> {:error, "Failed to validate session token"}
+      :invalid_identity -> {:error, "Failed to validate new identity object"}
+      err -> err
     end
   end
 end

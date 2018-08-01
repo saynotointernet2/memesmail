@@ -7,6 +7,7 @@ defmodule Memesmail.Session.Server do
 
   alias Memesmail.Session.SessionCache, as: Cache
   alias Memesmail.Model.Types, as: Types
+  alias Memesmail.Crypto.Session, as: Crypto
 
   @name SessionServer
 
@@ -80,7 +81,7 @@ defmodule Memesmail.Session.Server do
   #TODO Currently we will not use the loginToken parameter
   @spec compute_token(Types.user, Types.login_token, Types.nonce, Types.nonce) :: binary
   def compute_token(user, token, cnonce, snonce) do
-    user <> snonce <> cnonce <> token
+    Crypto.compute_session_token(user, token, cnonce, snonce)
   end
 
 end
